@@ -64,12 +64,12 @@ public:
     void waitByteTimes(int count);
 
     PoolByteArray read(int size);
-    String readString(int size);
-    String readLine(int size, String eol);
-    PoolStringArray readLines(int size, String eol);
+    String read_string(int size);
+    String readline(int size, String eol);
+    PoolStringArray readlines(int size, String eol);
 
     int write(PoolByteArray data);
-    int writeString(String data);
+    int write_string(String data);
     // -------------------------------------------------------------------------
 
 private:

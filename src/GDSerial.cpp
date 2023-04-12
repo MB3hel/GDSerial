@@ -47,6 +47,7 @@ PoolIntArray GDSerial::getTimeout(){
     timeouts.append(tout.read_timeout_multiplier);
     timeouts.append(tout.write_timeout_constant);
     timeouts.append(tout.write_timeout_multiplier);
+    return timeouts;
 }
 
 void GDSerial::setBytesize(int bytesize){
@@ -157,20 +158,43 @@ PoolByteArray GDSerial::read(int size){
     PoolByteArray data;
     uint8_t *buffer = new uint8_t[size];
     size_t len = ser.read(buffer, size);
-    for(int i = 0; i < len; ++i){
+    for(size_t i = 0; i < len; ++i){
         data.append(buffer[i]);
     }
+    delete[] buffer;
     return data;
 }
 
-String GDSerial::readString(int size){
+String GDSerial::read_string(int size){
     std::string buffer;
     ser.read(buffer, size);
     return String(buffer.c_str());
 }
 
-String GDSerial::readLine(int size, String eol);
-PoolStringArray GDSerial::readLines(int size, String eol);
+String GDSerial::readline(int size, String eol){
+    auto str = ser.readline(size, eol.ascii().get_data());
+    return String(str.c_str());
+}
 
-int GDSerial::write(PoolByteArray data);
-int GDSerial::writeString(String data);
+PoolStringArray GDSerial::readlines(int size, String eol){
+    PoolStringArray lines;
+    auto strs = ser.readlines(size, eol.ascii().get_data());
+    for(const auto &str : strs){
+        lines.append(String(str.c_str()));
+    }
+    return lines;
+}
+
+int GDSerial::write(PoolByteArray data){
+    uint8_t *buffer = new uint8_t[data.size()];
+    for(size_t i = 0; i < data.size(); ++i){
+        buffer[i] = data[i];
+    }
+    int ret = ser.write(buffer, data.size());
+    delete[] buffer;
+    return ret;
+}
+
+int GDSerial::write_string(String data){
+    return ser.write(std::string(data.ascii().get_data()));
+}
