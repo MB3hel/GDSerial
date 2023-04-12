@@ -27,7 +27,7 @@ if [ "$BUILD_SERIAL" == "true" ]; then
     cd serial
     rm CMakeLists.txt
     cp ../serial-alt-cmake.txt CMakeLists.txt
-    rm -rf build
+    rm -rf build/win64
     mkdir -p build/win64
     cd build/win64
     cmake ../.. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_TOOLCHAIN_FILE=../mingw-toolchain.cmake
@@ -50,6 +50,6 @@ for sfile in src/*.cpp; do
     echo "x86_64-w64-mingw32-g++ $CPPFLAGS \"$sfile\" -o \"$ofile\""
     x86_64-w64-mingw32-g++ $CPPFLAGS -c "$sfile" -o "$ofile"
 done
-echo "x86_64-w64-mingw32-g++ -shared -o bin/win64/libGDSerial.dll bin/obj/*.o godot-cpp/bin/libgodot-cpp.windows.release.64.a serial/build/win64/libserial.a"
-x86_64-w64-mingw32-g++ -shared -o bin/win64/libGDSerial.dll bin/obj/*.o godot-cpp/bin/libgodot-cpp.windows.release.64.a serial/build/win64/libserial.a
+echo "x86_64-w64-mingw32-g++ -shared -o bin/win64/libGDSerial.dll bin/obj/*.o godot-cpp/bin/libgodot-cpp.windows.release.64.a serial/build/win64/libserial.a -lsetupapi"
+x86_64-w64-mingw32-g++ -shared -o bin/win64/libGDSerial.dll bin/obj/*.o godot-cpp/bin/libgodot-cpp.windows.release.64.a serial/build/win64/libserial.a -lsetupapi
 rm -r bin/obj

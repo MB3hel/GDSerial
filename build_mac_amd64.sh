@@ -27,7 +27,7 @@ if [ "$BUILD_SERIAL" == "true" ]; then
     cd serial
     rm CMakeLists.txt
     cp ../serial-alt-cmake.txt CMakeLists.txt
-    rm -rf build
+    rm -rf build/mac64
     mkdir -p build/mac64
     cd build/mac64
     x86_64-apple-darwin20.2-cmake ../.. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON
