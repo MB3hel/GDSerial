@@ -1,0 +1,7 @@
+[submodule "godot-cpp"]
+	path = godot-cpp
+	url = https://github.com/godotengine/godot-cpp
+	branch = 3.5
+[submodule "serial"]
+	path = serial
+	url = https://github.com/wjwwood/serial.git
