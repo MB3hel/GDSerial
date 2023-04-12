@@ -38,7 +38,7 @@ fi
 
 
 # Build release libgdserial
-CPPFLAGS="-fPIC -std=c++14 -Igodot-cpp/include -Igodot-cpp/include/core -Igodot-cpp/include/gen -Igodot-cpp/godot-headers -O3"
+CPPFLAGS="-fPIC -std=c++14 -Igodot-cpp/include -Igodot-cpp/include/core -Igodot-cpp/include/gen -Igodot-cpp/godot-headers -Iinclude -O3"
 rm -rf bin/win64/
 rm -rf bin/obj
 mkdir bin/obj
