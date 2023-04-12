@@ -26,6 +26,10 @@ public:
     // -------------------------------------------------------------------------
     PoolStringArray list_ports();
 
+    // "exception" handling 
+    bool isError();
+    String errorMessage();
+
     void setPort(String port);
     String getPort();
     void setBaudrate(int baudrate);
@@ -108,4 +112,7 @@ public:
 private:
     serial::Serial ser;
     serial::Timeout tout;
+
+    bool _isError = false;
+    String _errorMessage;
 };

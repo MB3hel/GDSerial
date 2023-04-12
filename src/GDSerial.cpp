@@ -6,6 +6,8 @@ void GDSerial::_init(){
 }
 
 void GDSerial::_register_methods() {
+    register_method("isError", &GDSerial::isError);
+    register_method("errorMessage", &GDSerial::errorMessage);
     register_method("list_ports", &GDSerial::list_ports);
     register_method("setPort", &GDSerial::setPort);
     register_method("getPort", &GDSerial::getPort);
@@ -75,207 +77,450 @@ void GDSerial::_register_methods() {
     register_property<GDSerial, int>("FLOWCONTROL_SOFTWARE", &GDSerial::enumReadonlySetter, &GDSerial::get_flowcontrol_software, serial::flowcontrol_t::flowcontrol_software, GODOT_METHOD_RPC_MODE_DISABLED, no_editor_or_storage);
 }
 
-PoolStringArray GDSerial::list_ports(){
-    PoolStringArray arr;
-    for(const auto &port : serial::list_ports()){
-        arr.append(String(port.port.c_str()));
-    }
-    return arr;
-}
-
-void GDSerial::setPort(String port){
-    ser.setPort(port.ascii().get_data());
-}
-
-String GDSerial::getPort(){
-    return String(ser.getPort().c_str());
-}
-
-void GDSerial::setBaudrate(int baudrate){
-    ser.setBaudrate(baudrate);
-}
-
-int GDSerial::getBaudrate(){
-    return ser.getBaudrate();
-}
-
-void GDSerial::setTimeout(PoolIntArray timeouts){
-    tout = serial::Timeout(timeouts[0], timeouts[1], timeouts[2], timeouts[3], timeouts[4]);
-    ser.setTimeout(tout);
-}
-
-PoolIntArray GDSerial::getTimeout(){
-    PoolIntArray timeouts;
-    timeouts.append(tout.inter_byte_timeout);
-    timeouts.append(tout.read_timeout_constant);
-    timeouts.append(tout.read_timeout_multiplier);
-    timeouts.append(tout.write_timeout_constant);
-    timeouts.append(tout.write_timeout_multiplier);
-    return timeouts;
-}
-
-PoolIntArray GDSerial::simpleTimeout(int timeout){
-    auto t = serial::Timeout::simpleTimeout(timeout);
-    PoolIntArray timeouts;
-    timeouts.append(t.inter_byte_timeout);
-    timeouts.append(t.read_timeout_constant);
-    timeouts.append(t.read_timeout_multiplier);
-    timeouts.append(t.write_timeout_constant);
-    timeouts.append(t.write_timeout_multiplier);
-    return timeouts;
-}
-
-int GDSerial::timeoutMax(){
-    return serial::Timeout::max();
-}
-
-void GDSerial::setBytesize(int bytesize){
-    ser.setBytesize(static_cast<serial::bytesize_t>(bytesize));
-}
-
-int GDSerial::getBytesize(){
-    return static_cast<int>(ser.getBytesize());
-}
-
-void GDSerial::setParity(int parity){
-    ser.setParity(static_cast<serial::parity_t>(parity));
-}
-
-int GDSerial::getParity(){
-    return static_cast<int>(ser.getParity());
-}
-
-void GDSerial::setStopbits(int stopbits){
-    ser.setStopbits(static_cast<serial::stopbits_t>(stopbits));
-}
-
-int GDSerial::getStopbits(){
-    return static_cast<int>(ser.getStopbits());
-}
-
-void GDSerial::setFlowcontrol(int flowcontrol){
-    ser.setFlowcontrol(static_cast<serial::flowcontrol_t>(flowcontrol));
-}
-
-int GDSerial::getFlowcontrol(){
-    return static_cast<int>(ser.getFlowcontrol());
-}
-
-void GDSerial::flush(){
-    ser.flush();
-}
-
-void GDSerial::flushInput(){
-    ser.flushInput();
-}
-
-void GDSerial::flushOutput(){
-    ser.flushOutput();
-}
-
-void GDSerial::sendBreak(int duration){
-    ser.sendBreak(duration);
-}
-
-void GDSerial::setBreak(bool level){
-    ser.setBreak(level);
-}
-
-void GDSerial::setRTS(bool level){
-    ser.setRTS(level);
-}
-
-void GDSerial::setDTR(bool level){
-    ser.setDTR(level);
-}
-
-bool GDSerial::waitForChange(){
-    return ser.waitForChange();
-}
-
-bool GDSerial::getCTS(){
-    return ser.getCTS();
-}
-
-bool GDSerial::getDSR(){
-    return ser.getDSR();
-}
-
-bool GDSerial::getRI(){
-    return ser.getRI();
-}
-
-bool GDSerial::getCD(){
-    return ser.getCD();
-}
-
-void GDSerial::open(){
-    ser.open();
-}
-
-bool GDSerial::isOpen(){
-    return ser.isOpen();
-}
-
-void GDSerial::close(){
-    ser.close();
-}
-
-int GDSerial::available(){
-    return ser.available();
-}
-
-bool GDSerial::waitReadable(){
-    return ser.waitReadable();
-}
-
-void GDSerial::waitByteTimes(int count){
-    return ser.waitByteTimes(count);
-}
-
-PoolByteArray GDSerial::read(int size){
-    PoolByteArray data;
-    uint8_t *buffer = new uint8_t[size];
-    size_t len = ser.read(buffer, size);
-    for(size_t i = 0; i < len; ++i){
-        data.append(buffer[i]);
-    }
-    delete[] buffer;
-    return data;
-}
-
-String GDSerial::readString(int size){
-    std::string buffer;
-    ser.read(buffer, size);
-    return String(buffer.c_str());
-}
-
-String GDSerial::readline(int size, String eol){
-    auto str = ser.readline(size, eol.ascii().get_data());
-    return String(str.c_str());
-}
-
-PoolStringArray GDSerial::readlines(int size, String eol){
-    PoolStringArray lines;
-    auto strs = ser.readlines(size, eol.ascii().get_data());
-    for(const auto &str : strs){
-        lines.append(String(str.c_str()));
-    }
-    return lines;
-}
-
-int GDSerial::write(PoolByteArray data){
-    uint8_t *buffer = new uint8_t[data.size()];
-    for(size_t i = 0; i < data.size(); ++i){
-        buffer[i] = data[i];
-    }
-    int ret = ser.write(buffer, data.size());
-    delete[] buffer;
+bool GDSerial::isError(){
+    bool ret = _isError;
+    _isError = false;
     return ret;
 }
 
+String GDSerial::errorMessage(){
+    return _errorMessage;
+}
+
+PoolStringArray GDSerial::list_ports(){
+    try{
+        PoolStringArray arr;
+        for(const auto &port : serial::list_ports()){
+            arr.append(String(port.port.c_str()));
+        }
+        return arr;
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return PoolStringArray();
+    }
+}
+
+void GDSerial::setPort(String port){
+    try{
+        ser.setPort(port.ascii().get_data());
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+    }
+}
+
+String GDSerial::getPort(){
+    try{
+        return String(ser.getPort().c_str());
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return String();
+    }
+}
+
+void GDSerial::setBaudrate(int baudrate){
+    try{
+        ser.setBaudrate(baudrate);
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+    }
+}
+
+int GDSerial::getBaudrate(){
+    try{
+        return ser.getBaudrate();
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return 0;
+    }
+}
+
+void GDSerial::setTimeout(PoolIntArray timeouts){
+    try{
+        if(timeouts.size() < 5){
+            return;
+        }
+        tout = serial::Timeout(timeouts[0], timeouts[1], timeouts[2], timeouts[3], timeouts[4]);
+        ser.setTimeout(tout);
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+    }
+}
+
+PoolIntArray GDSerial::getTimeout(){
+    try{
+        PoolIntArray timeouts;
+        timeouts.append(tout.inter_byte_timeout);
+        timeouts.append(tout.read_timeout_constant);
+        timeouts.append(tout.read_timeout_multiplier);
+        timeouts.append(tout.write_timeout_constant);
+        timeouts.append(tout.write_timeout_multiplier);
+        return timeouts;
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return PoolIntArray();
+    }
+}
+
+PoolIntArray GDSerial::simpleTimeout(int timeout){
+    try{
+        auto t = serial::Timeout::simpleTimeout(timeout);
+        PoolIntArray timeouts;
+        timeouts.append(t.inter_byte_timeout);
+        timeouts.append(t.read_timeout_constant);
+        timeouts.append(t.read_timeout_multiplier);
+        timeouts.append(t.write_timeout_constant);
+        timeouts.append(t.write_timeout_multiplier);
+        return timeouts;
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return PoolIntArray();
+    }
+}
+
+int GDSerial::timeoutMax(){
+    try{
+        return serial::Timeout::max();
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return 0;
+    }
+}
+
+void GDSerial::setBytesize(int bytesize){
+    try{
+        ser.setBytesize(static_cast<serial::bytesize_t>(bytesize));
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+    }
+}
+
+int GDSerial::getBytesize(){
+    try{
+        return static_cast<int>(ser.getBytesize());
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return 0;
+    }
+}
+
+void GDSerial::setParity(int parity){
+    try{
+        ser.setParity(static_cast<serial::parity_t>(parity));
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+    }
+}
+
+int GDSerial::getParity(){
+    try{
+        return static_cast<int>(ser.getParity());
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return 0;
+    }
+}
+
+void GDSerial::setStopbits(int stopbits){
+    try{
+        ser.setStopbits(static_cast<serial::stopbits_t>(stopbits));
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+    }
+}
+
+int GDSerial::getStopbits(){
+    try{
+        return static_cast<int>(ser.getStopbits());
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return 0;
+    }
+}
+
+void GDSerial::setFlowcontrol(int flowcontrol){
+    try{
+        ser.setFlowcontrol(static_cast<serial::flowcontrol_t>(flowcontrol));
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+    }
+}
+
+int GDSerial::getFlowcontrol(){
+    try{
+        return static_cast<int>(ser.getFlowcontrol());
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return 0;
+    }
+}
+
+void GDSerial::flush(){
+    try{
+        ser.flush();
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+    }
+}
+
+void GDSerial::flushInput(){
+    try{
+        ser.flushInput();
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+    }
+}
+
+void GDSerial::flushOutput(){
+    try{
+        ser.flushOutput();
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+    }
+}
+
+void GDSerial::sendBreak(int duration){
+    try{
+        ser.sendBreak(duration);
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+    }
+}
+
+void GDSerial::setBreak(bool level){
+    try{
+        ser.setBreak(level);
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+    }
+}
+
+void GDSerial::setRTS(bool level){
+    try{
+        ser.setRTS(level);
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+    }
+}
+
+void GDSerial::setDTR(bool level){
+    try{
+       ser.setDTR(level); 
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+    }
+}
+
+bool GDSerial::waitForChange(){
+    try{
+        return ser.waitForChange();
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return false;
+    }
+}
+
+bool GDSerial::getCTS(){
+    try{
+        return ser.getCTS();
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return false;
+    }
+}
+
+bool GDSerial::getDSR(){
+    try{
+        return ser.getDSR();
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return false;
+    }
+}
+
+bool GDSerial::getRI(){
+    try{
+        return ser.getRI();
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return false;
+    }
+}
+
+bool GDSerial::getCD(){
+    try{
+        return ser.getCD();
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return false;
+    }
+}
+
+void GDSerial::open(){
+    try{
+        ser.open();
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+    }
+}
+
+bool GDSerial::isOpen(){
+    try{
+        return ser.isOpen();
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return false;
+    }
+}
+
+void GDSerial::close(){
+    try{
+        ser.close();
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+    }
+}
+
+int GDSerial::available(){
+    try{
+        return ser.available();
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return 0;
+    }
+}
+
+bool GDSerial::waitReadable(){
+    try{
+        return ser.waitReadable();
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return false;
+    }
+}
+
+void GDSerial::waitByteTimes(int count){
+    try{
+        ser.waitByteTimes(count);
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+    }
+}
+
+PoolByteArray GDSerial::read(int size){
+    try{
+        PoolByteArray data;
+        uint8_t *buffer = new uint8_t[size];
+        size_t len = ser.read(buffer, size);
+        for(size_t i = 0; i < len; ++i){
+            data.append(buffer[i]);
+        }
+        delete[] buffer;
+        return data;
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return PoolByteArray();
+    }
+}
+
+String GDSerial::readString(int size){
+    try{
+        std::string buffer;
+        ser.read(buffer, size);
+        return String(buffer.c_str());
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return String();
+    }
+}
+
+String GDSerial::readline(int size, String eol){
+    try{
+        auto str = ser.readline(size, eol.ascii().get_data());
+        return String(str.c_str());
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return String();
+    }
+}
+
+PoolStringArray GDSerial::readlines(int size, String eol){
+    try{
+        PoolStringArray lines;
+        auto strs = ser.readlines(size, eol.ascii().get_data());
+        for(const auto &str : strs){
+            lines.append(String(str.c_str()));
+        }
+        return lines;
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return PoolStringArray();
+    }
+}
+
+int GDSerial::write(PoolByteArray data){
+    try{
+        uint8_t *buffer = new uint8_t[data.size()];
+        for(size_t i = 0; i < data.size(); ++i){
+            buffer[i] = data[i];
+        }
+        int ret = ser.write(buffer, data.size());
+        delete[] buffer;
+        return ret;
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return 0;
+    }
+    
+}
+
 int GDSerial::writeString(String data){
-    return ser.write(std::string(data.ascii().get_data()));
+    try{
+        return ser.write(std::string(data.ascii().get_data()));
+    }catch(const std::exception &e){
+        _isError = true;
+        _errorMessage = e.what();
+        return 0;
+    }
 }
 
 
