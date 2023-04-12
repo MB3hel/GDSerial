@@ -37,4 +37,24 @@ env["AR"] = "x86_64-apple-darwin20.2-ar"
 env["RANLIB"] = "x86_64-apple-darwin20.2-ranlib"
 env["LINK"] = "x86_64-apple-darwin20.2-clang++"
 ```
-- Run build_mac_amd64.sh
+- Run build_mac_amd64.sh (may need to change `-darwin20.2` if not using same SDK when building osxcross)
+
+## Testing
+
+- Build
+- Run `copy_to_test.sh`
+- Use the `test` project in Godot editor
+
+To test on non-linux system
+
+- Zip test project (after building for target system and copying to test)
+- Copy zip to other system
+- Test as usual in editor
+
+
+## Packaging
+
+- Build
+- Copy to test
+- Run `package.sh`
+

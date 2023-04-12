@@ -13,6 +13,7 @@ void GDSerial::_register_methods() {
     register_method("getBaudrate", &GDSerial::getBaudrate);
     register_method("setTimeout", &GDSerial::setTimeout);
     register_method("getTimeout", &GDSerial::getTimeout);
+    register_method("simpleTimeout", &GDSerial::simpleTimeout);
     register_method("setBytesize", &GDSerial::setBytesize);
     register_method("getBytesize", &GDSerial::getBytesize);
     register_method("setParity", &GDSerial::setParity);
@@ -45,6 +46,32 @@ void GDSerial::_register_methods() {
     register_method("readlines", &GDSerial::readlines);
     register_method("write", &GDSerial::write);
     register_method("writeString", &GDSerial::writeString);
+
+    // Enum nonsense
+    godot_property_usage_flags no_editor_or_storage = static_cast<godot_property_usage_flags>(0);
+
+    // bytesize_t
+    register_property<GDSerial, int>("BYTESIZE_FIVEBITS", &GDSerial::enumReadonlySetter, &GDSerial::get_bytesize_fivebits, serial::bytesize_t::fivebits, GODOT_METHOD_RPC_MODE_DISABLED, no_editor_or_storage);
+    register_property<GDSerial, int>("BYTESIZE_SIXBITS", &GDSerial::enumReadonlySetter, &GDSerial::get_bytesize_sixbits, serial::bytesize_t::sixbits, GODOT_METHOD_RPC_MODE_DISABLED, no_editor_or_storage);
+    register_property<GDSerial, int>("BYTESIZE_SEVENBITS", &GDSerial::enumReadonlySetter, &GDSerial::get_bytesize_sevenbits, serial::bytesize_t::sevenbits, GODOT_METHOD_RPC_MODE_DISABLED, no_editor_or_storage);
+    register_property<GDSerial, int>("BYTESIZE_EIGHTBITS", &GDSerial::enumReadonlySetter, &GDSerial::get_bytesize_eightbits, serial::bytesize_t::eightbits, GODOT_METHOD_RPC_MODE_DISABLED, no_editor_or_storage);
+
+    // parity_t
+    register_property<GDSerial, int>("PARITY_NONE", &GDSerial::enumReadonlySetter, &GDSerial::get_parity_none, serial::parity_t::parity_none, GODOT_METHOD_RPC_MODE_DISABLED, no_editor_or_storage);
+    register_property<GDSerial, int>("PARITY_EVEN", &GDSerial::enumReadonlySetter, &GDSerial::get_parity_even, serial::parity_t::parity_even, GODOT_METHOD_RPC_MODE_DISABLED, no_editor_or_storage);
+    register_property<GDSerial, int>("PARITY_ODD", &GDSerial::enumReadonlySetter, &GDSerial::get_parity_odd, serial::parity_t::parity_odd, GODOT_METHOD_RPC_MODE_DISABLED, no_editor_or_storage);
+    register_property<GDSerial, int>("PARITY_MARK", &GDSerial::enumReadonlySetter, &GDSerial::get_parity_mark, serial::parity_t::parity_mark, GODOT_METHOD_RPC_MODE_DISABLED, no_editor_or_storage);
+    register_property<GDSerial, int>("PARITY_SPACE", &GDSerial::enumReadonlySetter, &GDSerial::get_parity_space, serial::parity_t::parity_space, GODOT_METHOD_RPC_MODE_DISABLED, no_editor_or_storage);
+
+    // stopbits_t
+    register_property<GDSerial, int>("STOPBITS_ONE", &GDSerial::enumReadonlySetter, &GDSerial::get_stopbits_one, serial::stopbits_t::stopbits_one, GODOT_METHOD_RPC_MODE_DISABLED, no_editor_or_storage);
+    register_property<GDSerial, int>("STOPBITS_TWO", &GDSerial::enumReadonlySetter, &GDSerial::get_stopbits_two, serial::stopbits_t::stopbits_two, GODOT_METHOD_RPC_MODE_DISABLED, no_editor_or_storage);
+    register_property<GDSerial, int>("STOPBITS_ONE_POINT_FIVE", &GDSerial::enumReadonlySetter, &GDSerial::get_stopbits_one_point_five, serial::stopbits_t::stopbits_one_point_five, GODOT_METHOD_RPC_MODE_DISABLED, no_editor_or_storage);
+
+    // flowcontrol_t
+    register_property<GDSerial, int>("FLOWCONTROL_NONE", &GDSerial::enumReadonlySetter, &GDSerial::get_flowcontrol_none, serial::flowcontrol_t::flowcontrol_none, GODOT_METHOD_RPC_MODE_DISABLED, no_editor_or_storage);
+    register_property<GDSerial, int>("FLOWCONTROL_HARDWARE", &GDSerial::enumReadonlySetter, &GDSerial::get_flowcontrol_hardware, serial::flowcontrol_t::flowcontrol_hardware, GODOT_METHOD_RPC_MODE_DISABLED, no_editor_or_storage);
+    register_property<GDSerial, int>("FLOWCONTROL_SOFTWARE", &GDSerial::enumReadonlySetter, &GDSerial::get_flowcontrol_software, serial::flowcontrol_t::flowcontrol_software, GODOT_METHOD_RPC_MODE_DISABLED, no_editor_or_storage);
 }
 
 PoolStringArray GDSerial::list_ports(){
@@ -83,6 +110,17 @@ PoolIntArray GDSerial::getTimeout(){
     timeouts.append(tout.read_timeout_multiplier);
     timeouts.append(tout.write_timeout_constant);
     timeouts.append(tout.write_timeout_multiplier);
+    return timeouts;
+}
+
+PoolIntArray GDSerial::simpleTimeout(int timeout){
+    auto t = serial::Timeout::simpleTimeout(timeout);
+    PoolIntArray timeouts;
+    timeouts.append(t.inter_byte_timeout);
+    timeouts.append(t.read_timeout_constant);
+    timeouts.append(t.read_timeout_multiplier);
+    timeouts.append(t.write_timeout_constant);
+    timeouts.append(t.write_timeout_multiplier);
     return timeouts;
 }
 
@@ -233,4 +271,79 @@ int GDSerial::write(PoolByteArray data){
 
 int GDSerial::writeString(String data){
     return ser.write(std::string(data.ascii().get_data()));
+}
+
+
+
+
+// Enum nonsense
+
+// Used by all (since these are readonly properties)
+void GDSerial::enumReadonlySetter(int value){
+    // Do nothing. This is a fake setter.
+    (void) value;
+}
+
+// bytesize_t
+int GDSerial::get_bytesize_fivebits(){
+    return static_cast<int>(serial::bytesize_t::fivebits);
+}
+
+int GDSerial::get_bytesize_sixbits(){
+    return static_cast<int>(serial::bytesize_t::sixbits);
+}
+
+int GDSerial::get_bytesize_sevenbits(){
+    return static_cast<int>(serial::bytesize_t::sevenbits);
+}
+
+int GDSerial::get_bytesize_eightbits(){
+    return static_cast<int>(serial::bytesize_t::eightbits);
+}
+
+// parity_t
+int GDSerial::get_parity_none(){
+    return static_cast<int>(serial::parity_t::parity_none);
+}
+
+int GDSerial::get_parity_odd(){
+    return static_cast<int>(serial::parity_t::parity_odd);
+}
+
+int GDSerial::get_parity_even(){
+    return static_cast<int>(serial::parity_t::parity_even);
+}
+
+int GDSerial::get_parity_mark(){
+    return static_cast<int>(serial::parity_t::parity_mark);
+}
+
+int GDSerial::get_parity_space(){
+    return static_cast<int>(serial::parity_t::parity_space);
+}
+
+// stopbits_t
+int GDSerial::get_stopbits_one(){
+    return static_cast<int>(serial::stopbits_t::stopbits_one);
+}
+
+int GDSerial::get_stopbits_two(){
+    return static_cast<int>(serial::stopbits_t::stopbits_two);
+}
+
+int GDSerial::get_stopbits_one_point_five(){
+    return static_cast<int>(serial::stopbits_t::stopbits_one_point_five);
+}
+
+// flowcontrol_t
+int GDSerial::get_flowcontrol_none(){
+    return static_cast<int>(serial::flowcontrol_t::flowcontrol_none);
+}
+
+int GDSerial::get_flowcontrol_software(){
+    return static_cast<int>(serial::flowcontrol_t::flowcontrol_software);
+}
+
+int GDSerial::get_flowcontrol_hardware(){
+    return static_cast<int>(serial::flowcontrol_t::flowcontrol_hardware);
 }

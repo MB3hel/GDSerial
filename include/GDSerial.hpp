@@ -32,6 +32,7 @@ public:
     int getBaudrate();
     void setTimeout(PoolIntArray timeouts);
     PoolIntArray getTimeout();
+    PoolIntArray simpleTimeout(int timeout);
     void setBytesize(int bytesize);
     int getBytesize();
     void setParity(int parity);
@@ -70,8 +71,39 @@ public:
 
     int write(PoolByteArray data);
     int writeString(String data);
+
     // -------------------------------------------------------------------------
 
+    // -------------------------------------------------------------------------
+    // Enum stupidity
+    // -------------------------------------------------------------------------
+    // Used by all (since these are readonly properties)
+    void enumReadonlySetter(int);
+
+    // bytesize_t
+    int get_bytesize_fivebits();
+    int get_bytesize_sixbits();
+    int get_bytesize_sevenbits();
+    int get_bytesize_eightbits();
+
+    // parity_t
+    int get_parity_none();
+    int get_parity_odd();
+    int get_parity_even();
+    int get_parity_mark();
+    int get_parity_space();
+
+    // stopbits_t
+    int get_stopbits_one();
+    int get_stopbits_two();
+    int get_stopbits_one_point_five();
+
+    // flowcontrol_t
+    int get_flowcontrol_none();
+    int get_flowcontrol_software();
+    int get_flowcontrol_hardware();
+    // -------------------------------------------------------------------------
+    
 private:
     serial::Serial ser;
     serial::Timeout tout;
