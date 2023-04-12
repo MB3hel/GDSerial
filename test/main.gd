@@ -8,6 +8,7 @@ func _ready():
 	var ports = ser.list_ports()
 	if not ports.has(port):
 		print("Cannot find port")
+		print("Valid ports: " + str(ports))
 		get_tree().quit()
 		return
 	
