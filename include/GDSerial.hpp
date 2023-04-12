@@ -3,6 +3,8 @@
 #include <Godot.hpp>
 #include <Reference.hpp>
 
+#include <stdint.h>
+
 #include <serial/serial.h>
 
 using namespace godot;
@@ -62,7 +64,7 @@ public:
     void waitByteTimes(int count);
 
     PoolByteArray read(int size);
-    String readString();
+    String readString(int size);
     String readLine(int size, String eol);
     PoolStringArray readLines(int size, String eol);
 
@@ -72,4 +74,5 @@ public:
 
 private:
     serial::Serial ser;
+    serial::Timeout tout;
 };
