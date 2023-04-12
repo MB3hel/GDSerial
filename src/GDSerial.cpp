@@ -14,6 +14,7 @@ void GDSerial::_register_methods() {
     register_method("setTimeout", &GDSerial::setTimeout);
     register_method("getTimeout", &GDSerial::getTimeout);
     register_method("simpleTimeout", &GDSerial::simpleTimeout);
+    register_method("timeoutMax", &GDSerial::timeoutMax);
     register_method("setBytesize", &GDSerial::setBytesize);
     register_method("getBytesize", &GDSerial::getBytesize);
     register_method("setParity", &GDSerial::setParity);
@@ -122,6 +123,10 @@ PoolIntArray GDSerial::simpleTimeout(int timeout){
     timeouts.append(t.write_timeout_constant);
     timeouts.append(t.write_timeout_multiplier);
     return timeouts;
+}
+
+int GDSerial::timeoutMax(){
+    return serial::Timeout::max();
 }
 
 void GDSerial::setBytesize(int bytesize){

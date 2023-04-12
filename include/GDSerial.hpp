@@ -33,6 +33,7 @@ public:
     void setTimeout(PoolIntArray timeouts);
     PoolIntArray getTimeout();
     PoolIntArray simpleTimeout(int timeout);
+    int timeoutMax();
     void setBytesize(int bytesize);
     int getBytesize();
     void setParity(int parity);
