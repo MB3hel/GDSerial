@@ -50,6 +50,6 @@ for sfile in src/*.cpp; do
     echo "o64-clang++ $CPPFLAGS \"$sfile\" -o \"$ofile\""
     o64-clang++ $CPPFLAGS -c "$sfile" -o "$ofile"
 done
-echo "o64-clang++ -shared -o bin/mac64/libgdseral.dylib bin/obj/*.o godot-cpp/bin/libgodot-cpp.osx.release.x86_64.a serial/build/mac64/libserial.a"
-o64-clang++ -shared -o bin/mac64/libgdseral.dylib bin/obj/*.o godot-cpp/bin/libgodot-cpp.osx.release.x86_64.a serial/build/mac64/libserial.a
+echo "o64-clang++ -shared -o bin/mac64/libGDSerial.dylib bin/obj/*.o godot-cpp/bin/libgodot-cpp.osx.release.x86_64.a serial/build/mac64/libserial.a"
+o64-clang++ -shared -o bin/mac64/libGDSerial.dylib bin/obj/*.o godot-cpp/bin/libgodot-cpp.osx.release.x86_64.a serial/build/mac64/libserial.a
 rm -r bin/obj

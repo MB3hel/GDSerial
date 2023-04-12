@@ -50,6 +50,6 @@ for sfile in src/*.cpp; do
     echo "x86_64-w64-mingw32-g++ $CPPFLAGS \"$sfile\" -o \"$ofile\""
     x86_64-w64-mingw32-g++ $CPPFLAGS -c "$sfile" -o "$ofile"
 done
-echo "x86_64-w64-mingw32-g++ -shared -o bin/win64/libgdseral.dll bin/obj/*.o godot-cpp/bin/libgodot-cpp.windows.release.64.a serial/build/win64/libserial.a"
-x86_64-w64-mingw32-g++ -shared -o bin/win64/libgdseral.dll bin/obj/*.o godot-cpp/bin/libgodot-cpp.windows.release.64.a serial/build/win64/libserial.a
+echo "x86_64-w64-mingw32-g++ -shared -o bin/win64/libGDSerial.dll bin/obj/*.o godot-cpp/bin/libgodot-cpp.windows.release.64.a serial/build/win64/libserial.a"
+x86_64-w64-mingw32-g++ -shared -o bin/win64/libGDSerial.dll bin/obj/*.o godot-cpp/bin/libgodot-cpp.windows.release.64.a serial/build/win64/libserial.a
 rm -r bin/obj

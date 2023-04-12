@@ -6,9 +6,45 @@ void GDSerial::_init(){
 }
 
 void GDSerial::_register_methods() {
-    // register_method("method", &SimpleClass::method);
-    // register_property<SimpleClass, String>("base/name", &SimpleClass::_name, String("SimpleClass"));
-    // register_property<SimpleClass, int>("base/value", &SimpleClass::set_value, &SimpleClass::get_value, 0);
+    register_method("list_ports", &GDSerial::list_ports);
+    register_method("setPort", &GDSerial::setPort);
+    register_method("getPort", &GDSerial::getPort);
+    register_method("setBaudrate", &GDSerial::setBaudrate);
+    register_method("getBaudrate", &GDSerial::getBaudrate);
+    register_method("setTimeout", &GDSerial::setTimeout);
+    register_method("getTimeout", &GDSerial::getTimeout);
+    register_method("setBytesize", &GDSerial::setBytesize);
+    register_method("getBytesize", &GDSerial::getBytesize);
+    register_method("setParity", &GDSerial::setParity);
+    register_method("getParity", &GDSerial::getParity);
+    register_method("setStopbits", &GDSerial::setStopbits);
+    register_method("getStopbits", &GDSerial::getStopbits);
+    register_method("setFlowcontrol", &GDSerial::setFlowcontrol);
+    register_method("getFlowcontrol", &GDSerial::getFlowcontrol);
+    register_method("flush", &GDSerial::flush);
+    register_method("flushInput", &GDSerial::flushInput);
+    register_method("flushOutput", &GDSerial::flushOutput);
+    register_method("sendBreak", &GDSerial::sendBreak);
+    register_method("setBreak", &GDSerial::setBreak);
+    register_method("setRTS", &GDSerial::setRTS);
+    register_method("setDTR", &GDSerial::setDTR);
+    register_method("waitForChange", &GDSerial::waitForChange);
+    register_method("getCTS", &GDSerial::getCTS);
+    register_method("getDSR", &GDSerial::getDSR);
+    register_method("getRI", &GDSerial::getRI);
+    register_method("getCD", &GDSerial::getCD);
+    register_method("open", &GDSerial::open);
+    register_method("isOpen", &GDSerial::isOpen);
+    register_method("close", &GDSerial::close);
+    register_method("available", &GDSerial::available);
+    register_method("waitReadable", &GDSerial::waitReadable);
+    register_method("waitByteTimes", &GDSerial::waitByteTimes);
+    register_method("read", &GDSerial::read);
+    register_method("readString", &GDSerial::readString);
+    register_method("readline", &GDSerial::readline);
+    register_method("readlines", &GDSerial::readlines);
+    register_method("write", &GDSerial::write);
+    register_method("writeString", &GDSerial::writeString);
 }
 
 PoolStringArray GDSerial::list_ports(){
@@ -165,7 +201,7 @@ PoolByteArray GDSerial::read(int size){
     return data;
 }
 
-String GDSerial::read_string(int size){
+String GDSerial::readString(int size){
     std::string buffer;
     ser.read(buffer, size);
     return String(buffer.c_str());
@@ -195,6 +231,6 @@ int GDSerial::write(PoolByteArray data){
     return ret;
 }
 
-int GDSerial::write_string(String data){
+int GDSerial::writeString(String data){
     return ser.write(std::string(data.ascii().get_data()));
 }

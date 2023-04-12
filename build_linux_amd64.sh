@@ -51,6 +51,6 @@ for sfile in src/*.cpp; do
     echo "g++ $CPPFLAGS \"$sfile\" -o \"$ofile\""
     g++ $CPPFLAGS -c "$sfile" -o "$ofile"
 done
-echo "g++ -shared -o bin/linux64/libgdserial.so bin/obj/*.o godot-cpp/bin/libgodot-cpp.linux.release.64.a serial/build/linux64/libserial.a"
-g++ -shared -o bin/linux64/libgdserial.so bin/obj/*.o godot-cpp/bin/libgodot-cpp.linux.release.64.a serial/build/linux64/libserial.a
+echo "g++ -shared -o bin/linux64/libGDSerial.so bin/obj/*.o godot-cpp/bin/libgodot-cpp.linux.release.64.a serial/build/linux64/libserial.a"
+g++ -shared -o bin/linux64/libGDSerial.so bin/obj/*.o godot-cpp/bin/libgodot-cpp.linux.release.64.a serial/build/linux64/libserial.a
 rm -r bin/obj
