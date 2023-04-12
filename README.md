@@ -25,3 +25,16 @@ All builds are done on Ubuntu 22.04 amd64 host.
     sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
     ```
 - Run build_win_amd64.sh
+
+### Build macOS AMD64
+
+- Use apt to install clang cmake git patch python3 libssl-dev lzma-dev libxml2-dev llvm-dev uuid-dev "libstdc++-*-dev"
+- Build and install [osxcross](https://github.com/tpoechtrager/osxcross). Edit profile so it is in your path.
+- Edit `godot-cpp/SConstruct` and replace CXX setting on line 232 with the following
+```
+env["CXX"] = "x86_64-apple-darwin20.2-clang++"
+env["AR"] = "x86_64-apple-darwin20.2-ar"
+env["RANLIB"] = "x86_64-apple-darwin20.2-ranlib"
+env["LINK"] = "x86_64-apple-darwin20.2-clang++"
+```
+- Run build_mac_amd64.sh
