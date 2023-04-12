@@ -1,0 +1,18 @@
+[general]
+
+singleton=false
+load_once=true
+symbol_prefix="godot_"
+reloadable=true
+
+[entry]
+
+Windows.64="res://gdserial/win64/libgdserial.dll"
+X11.64="res://gdserial/linux64/libgdserial.so"
+OSX.64="res://gdserial/macos64/libgdserial.dylib"
+
+[dependencies]
+
+Windows.64=[  ]
+X11.64=[  ]
+OSX.64=[  ]
