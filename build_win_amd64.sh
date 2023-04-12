@@ -38,7 +38,7 @@ fi
 
 
 # Build release libgdserial
-CPPFLAGS="-fPIC -std=c++14 -Igodot-cpp/include -Igodot-cpp/include/core -Igodot-cpp/include/gen -Igodot-cpp/godot-headers -Iinclude -Iserial/include -O3"
+CPPFLAGS="-fPIC -std=c++14 -Igodot-cpp/include -Igodot-cpp/include/core -Igodot-cpp/include/gen -Igodot-cpp/godot-headers -Iinclude -Iserial/include -O3 -static -static-libgcc -static-libstdc++"
 rm -rf bin/win64/
 rm -rf bin/obj
 mkdir bin/obj
@@ -51,5 +51,5 @@ for sfile in src/*.cpp; do
     x86_64-w64-mingw32-g++ $CPPFLAGS -c "$sfile" -o "$ofile"
 done
 echo "x86_64-w64-mingw32-g++ -shared -o bin/win64/libGDSerial.dll bin/obj/*.o godot-cpp/bin/libgodot-cpp.windows.release.64.a serial/build/win64/libserial.a -lsetupapi"
-x86_64-w64-mingw32-g++ -shared -o bin/win64/libGDSerial.dll bin/obj/*.o godot-cpp/bin/libgodot-cpp.windows.release.64.a serial/build/win64/libserial.a -lsetupapi
+x86_64-w64-mingw32-g++ -static -static-libgcc -static-libstdc++ -shared -o bin/win64/libGDSerial.dll bin/obj/*.o godot-cpp/bin/libgodot-cpp.windows.release.64.a serial/build/win64/libserial.a -lsetupapi
 rm -r bin/obj
