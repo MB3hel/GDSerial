@@ -9,7 +9,7 @@ reloadable=true
 
 Windows.64="res://GDSerial/win64/libGDSerial.dll"
 X11.64="res://GDSerial/linux64/libGDSerial.so"
-OSX.64="res://GDSerial/macos64/libGDSerial.dylib"
+OSX.64="res://GDSerial/mac64/libGDSerial.dylib"
 
 [dependencies]
 
