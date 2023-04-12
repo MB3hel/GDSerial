@@ -22,7 +22,7 @@ public:
     // -------------------------------------------------------------------------
     // GDSerial Instance functions (exposed to Godot)
     // -------------------------------------------------------------------------
-    PoolStringArray enumerate_ports();
+    PoolStringArray list_ports();
 
     void setPort(String port);
     String getPort();
