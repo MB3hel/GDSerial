@@ -19,6 +19,18 @@ Serial library for Godot Engine using [libserial](https://github.com/wjwwood/ser
 Download the latest zip from the [Releases](https://github.com/MB3hel/GDSerial/releases) page. Add to the root of your project res folder.
 
 
-## Functions / API
+## Usage
+
+
+### Create an Instance
+
+**WARNING: DO NOT USE THE SAME `GDSerial` INSTANCE FROM MULTIPLE THREADS! THIS WILL CAUSE SEGFAULTS IN GODOT ITSELF.** I have not tested using the same instance protected by a mutex, but GDNative instances do not seem to be thread safe.
+
+```
+onready var ser = preload("res://GDSerial/GDSerial.gdns").new()
+```
+
+
+### API
 
 TODO
