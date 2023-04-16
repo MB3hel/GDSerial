@@ -24,10 +24,10 @@ Download the latest zip from the [Releases](https://github.com/MB3hel/GDSerial/r
 
 ### Create an Instance
 
-**WARNING: DO NOT USE THE SAME `GDSerial` INSTANCE FROM MULTIPLE THREADS! THIS WILL CAUSE SEGFAULTS IN GODOT ITSELF.** I have not tested using the same instance protected by a mutex, but GDNative instances do not seem to be thread safe.
+**WARNING: DO NOT USE THE SAME `GDSerial` INSTANCE FROM MULTIPLE THREADS! THIS WILL CAUSE SEGFAULTS IN GODOT ITSELF.** GDNative instances do not seem to be thread safe.
 
 ```
-onready var ser = preload("res://GDSerial/GDSerial.gdns").new()
+var ser = load("res://GDSerial/GDSerial.gdns").new()
 ```
 
 
